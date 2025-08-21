@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>VBO SERVICE — AI-Based Data Analysis</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Icons & Fonts -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --green1:#00c26e; --green2:#009a57;
+      --dark:#0f1113; --dark2:#1f2328;
+      --ink:#0f0f11; --muted:#6b6f76;
+      --radius:18px; --shadow:0 18px 50px rgba(0,0,0,.18);
+      --ring:0 0 0 3px rgba(0,194,110,.25);
+    }
+
+    /* ===== Base ===== */
+    *{box-sizing:border-box}
+    html,body{margin:0; padding:0}
+    body{font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink); background:#f7f8fa}
+    img{max-width:100%; display:block}
+    /* kill underlines everywhere unless explicitly added */
+    a{color:inherit; text-decoration:none}
+    a:hover{text-decoration:none}
+
+    /* ===== Top announcement ===== */
+    .vbo-topbar{
+      background:#0c0d0f; color:#fff; text-align:center;
+      padding:.55rem .75rem; font-size:14px; border-bottom:1px solid rgba(255,255,255,.08)
+    }
+    .vbo-topbar a{color:var(--green1); font-weight:700; margin-left:.5rem}
+
+    /* ===== Navbar ===== */
+    .vbo-navbar{position:sticky; top:0; z-index:50; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    .vbo-nav-inner{max-width:1200px; margin:auto; padding:.7rem 16px; display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .vbo-brand{display:flex; align-items:center; gap:.5rem}
+    .brand-mark{width:28px;height:28px;border-radius:8px; box-shadow:0 6px 14px rgba(0,194,110,.25)}
+    .word-1{font-weight:800; font-size:1.25rem; color:#111}
+    .word-2{font-weight:800; font-size:1.25rem; color:var(--green1)}
+
+    /* mobile toggle */
+    #nav-toggle{display:none}
+    .nav-toggle-btn{display:none; cursor:pointer; padding:.4rem .6rem; border-radius:10px; border:1px solid #e7eaee}
+    .nav-toggle-btn i{font-size:22px}
+
+    .vbo-navlinks{list-style:none; display:flex; gap:.5rem; margin:0; padding:0; align-items:center}
+    .vbo-link{
+      display:inline-block; padding:.5rem 1.2rem; border-radius:999px; color:#111;
+      border:1px solid transparent; transition:.2s; font-weight:600
+    }
+    .vbo-link:hover{color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2)); box-shadow:0 6px 16px rgba(0,194,110,.25)}
+    .vbo-link.active{color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2)); box-shadow:0 6px 16px rgba(0,194,110,.28)}
+
+    .nav-demo-btn{
+      display:inline-flex; align-items:center; gap:.45rem; padding:.55rem 1.1rem; border-radius:999px;
+      color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2));
+      box-shadow:0 10px 26px rgba(0,194,110,.28); font-weight:800;
+      transition:transform .08s, filter .2s, box-shadow .2s;
+    }
+    .nav-demo-btn:hover{transform:translateY(-1px); filter:brightness(1.05); box-shadow:0 14px 34px rgba(0,194,110,.35)}
+
+    @media (max-width: 980px){
+      .nav-toggle-btn{display:block}
+      .vbo-navlinks{display:none; position:absolute; left:0; right:0; top:60px; background:#fff; padding:10px 16px; box-shadow:0 10px 30px rgba(0,0,0,.08)}
+      #nav-toggle:checked ~ .vbo-navlinks{display:flex; flex-direction:column; align-items:stretch; gap:.35rem}
+      .vbo-link, .nav-demo-btn{width:100%; text-align:center}
+    }
+
+    /* ===== Hero ===== */
+    .hero{
+      background:
+        radial-gradient(110% 70% at 10% 0%, rgba(0,194,110,.14), transparent 50%),
+        radial-gradient(90% 80% at 90% 20%, rgba(0,154,87,.12), transparent 60%),
+        linear-gradient(180deg,#111,#171a1f);
+      color:#fff; padding:66px 16px
+    }
+    .hero-inner{max-width:1100px; margin:auto; display:grid; grid-template-columns:1.1fr .9fr; gap:32px; align-items:center}
+    .hero h1{font-size:clamp(34px,5.2vw,52px); line-height:1.06; margin:0 0 10px}
+    .hero p{max-width:720px; color:#d7dbe1; margin:8px 0 20px}
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:.6rem; padding:12px 18px; border-radius:999px; font-weight:800; border:0; cursor:pointer; box-shadow:var(--shadow)}
+    .btn-emerald{color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2))}
+    .btn-emerald:hover{transform:translateY(-1px); filter:brightness(1.05)}
+    .btn-ghost{background:transparent; color:#fff; border:1px solid rgba(255,255,255,.25)}
+    .btn-ghost:hover{background:rgba(255,255,255,.08)}
+
+    .hero-media{position:relative}
+    .hero-media img{border-radius:18px; box-shadow:var(--shadow); aspect-ratio:4/3; object-fit:cover}
+
+    /* ===== Sections ===== */
+    .section{max-width:1200px; margin:36px auto; padding:0 16px}
+
+    /* chips row */
+    .chiprow{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .chip{display:inline-flex; align-items:center; gap:6px; font-weight:600; padding:.4rem .8rem; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.18); color:#e7ebf2}
+
+    /* features grid */
+    .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px}
+    .card{background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:18px}
+    .card h3{margin:.2rem 0 .3rem}
+    .card p{color:#2b2e33; margin:0}
+
+    /* How it works steps */
+    .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
+    @media (max-width:980px){ .steps{grid-template-columns:1fr 1fr} }
+    @media (max-width:620px){ .steps{grid-template-columns:1fr} }
+    .step{background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:18px; position:relative}
+    .step .num{position:absolute; top:12px; left:12px; font-weight:800; color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2)); border-radius:12px; padding:.25rem .5rem; font-size:12px; box-shadow:var(--ring)}
+    .step h4{margin:1.6rem 0 .35rem}
+    .muted{color:var(--muted)}
+
+    /* media pair */
+    .media-row{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+    @media (max-width:900px){ .media-row{grid-template-columns:1fr} }
+    .media-row img{border-radius:16px; box-shadow:var(--shadow); object-fit:cover; aspect-ratio:16/9}
+
+    /* bullets w/ ticks */
+    .ticks{columns:2; column-gap:26px}
+    @media (max-width:820px){ .ticks{columns:1} }
+    .tick{display:flex; align-items:flex-start; gap:10px; margin:.35rem 0}
+    .tick i{color:var(--green1); font-size:20px; margin-top:2px}
+
+    /* CTA band */
+    .cta{background: radial-gradient(80% 80% at 10% 10%, rgba(0,194,110,.14), transparent 60%), linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.18)), #1f2328; color:#fff; border-radius:18px; overflow:hidden; position:relative}
+    .cta .glow{position:absolute; inset:auto -10% -30% auto; width:60%; height:140%; background: radial-gradient(50% 50% at 30% 50%, rgba(0,255,136,.12), transparent 60%); filter: blur(20px); pointer-events:none}
+    .cta-inner{max-width:1200px; margin:auto; padding:28px 16px; display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center}
+    @media (max-width:780px){ .cta-inner{grid-template-columns:1fr} }
+
+    /* ===== Footer ===== */
+    .vbo-footer{background:linear-gradient(180deg,#1f2328,#0f1113); position:relative; overflow:hidden; margin-top:48px}
+    .vbo-footer::before{content:""; position:absolute; top:-30%; left:-20%; width:80%; height:120%; background:radial-gradient(50% 50% at 30% 50%, rgba(0,255,136,.12), transparent 70%); filter:blur(50px); pointer-events:none}
+    .vbo-footer .container{max-width:1200px; margin:auto; padding:32px 16px; position:relative; z-index:1}
+    .footer-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:26px}
+    @media (max-width:980px){ .footer-grid{grid-template-columns:1fr 1fr} }
+    @media (max-width:640px){ .footer-grid{grid-template-columns:1fr} }
+    .footer-bottom{background:#0c0e0f; border-top:1px solid rgba(255,255,255,.08); text-align:center; padding:12px 16px; color:#cfd4db}
+    .vbo-footer .vbo-link{color:rgba(255,255,255,.85)}
+    .vbo-footer .vbo-link:hover{color:var(--green1)}
+    .vbo-social i{font-size:28px; color:rgba(255,255,255,.85)}
+    .vbo-social:hover i{color:var(--green1)}
+
+    /* Utility */
+    .eyebrow{font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted)}
+    .spc{height:8px}
+  </style>
+</head>
+<body>
+
+  <!-- Announcement -->
+  <div class="vbo-topbar">
+    📈 AI Data Analysis now live for <strong>Subway, QSR & Fuel</strong> — daily insights, variance alerts & weekly P&L snapshots.
+    <a href="requestademo.html">Get a demo →</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="vbo-navbar" aria-label="Main">
+    <div class="vbo-nav-inner">
+      <a class="vbo-brand" href="index.html" aria-label="VBO Service">
+        <img class="brand-mark" src="vbo-logo-square-500.png" width="28" height="28" alt="VBO logo">
+        <span class="word-1">VBO</span><span class="word-2">SERVICE</span>
+      </a>
+
+      <input type="checkbox" id="nav-toggle">
+      <label class="nav-toggle-btn" for="nav-toggle" aria-label="Menu"><i class='bx bx-menu'></i></label>
+
+      <ul class="vbo-navlinks">
+        <li><a href="index.html" class="vbo-link">Home</a></li>
+        <li><a href="services.html" class="vbo-link active">Service</a></li>
+        <li><a href="contact.html" class="vbo-link">Contact</a></li>
+        <li><a href="requestademo.html" class="nav-demo-btn"><i class='bx bx-play-circle'></i> Request a Demo</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="eyebrow">AI-BASED DATA ANALYSIS</div>
+        <h1>Turn your data into clear, daily decisions.</h1>
+        <p>
+          We connect POS, delivery apps, timeclock, and bank feeds—then apply AI to detect anomalies, forecast sales,
+          track COGS/prime cost, and surface the few things that need your attention today.
+        </p>
+        <div class="chiprow">
+          <span class="chip"><i class='bx bxs-bot'></i> Anomaly detection</span>
+          <span class="chip"><i class='bx bx-line-chart'></i> Forecasts</span>
+          <span class="chip"><i class='bx bx-money'></i> Prime cost & COGS</span>
+          <span class="chip"><i class='bx bx-bell'></i> Live alerts</span>
+        </div>
+        <div class="spc"></div>
+        <a href="requestademo.html" class="btn btn-emerald">Get a Demo</a>
+        <a href="contact.html" class="btn btn-ghost" style="margin-left:8px">Talk to an Expert</a>
+      </div>
+
+      <div class="hero-media">
+        <!-- Use your bright AI dashboard image here -->
+        <img src="assets/img/aidataimg.png" alt="AI analytics dashboard preview">
+      </div>
+    </div>
+  </header>
+
+  <!-- What we analyze -->
+  <section class="section">
+    <h2>What We Analyze</h2>
+    <p class="muted">A unified model across your locations so patterns, leaks, and opportunities are crystal clear.</p>
+    <div class="grid" style="margin-top:14px">
+      <div class="card"><h3>Sales & Voids</h3><p>Daily POS pulls, void/comp heatmaps, promo impact, daypart trends.</p></div>
+      <div class="card"><h3>Labor & Overtime</h3><p>Hours vs. sales, OT flags, schedule adherence, productivity ratios.</p></div>
+      <div class="card"><h3>Inventory & Food Cost</h3><p>Usage vs. theoretical, waste/spoilage patterns, COGS trajectory.</p></div>
+      <div class="card"><h3>Delivery Platforms</h3><p>DoorDash/UberEats disputes, refund spikes, menu pricing checks.</p></div>
+      <div class="card"><h3>Bank & Deposits</h3><p>Deposit matching, negative cash alerts, day-end variances.</p></div>
+      <div class="card"><h3>Compliance & Exceptions</h3><p>Missed punches, out-of-policy leaves, unusual tip swings.</p></div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <h2>How It Works</h2>
+    <div class="steps" style="margin-top:12px">
+      <div class="step">
+        <span class="num">01</span>
+        <h4>Connect & Ingest</h4>
+        <p class="muted">We securely connect POS, delivery, timeclock, and bank feeds. Historical data is backfilled and normalized.</p>
+      </div>
+      <div class="step">
+        <span class="num">02</span>
+        <h4>Clean & Enrich</h4>
+        <p class="muted">AI cleans duplicates, maps categories, and enriches data (daypart, weather, events) for better context.</p>
+      </div>
+      <div class="step">
+        <span class="num">03</span>
+        <h4>Detect & Forecast</h4>
+        <p class="muted">Anomaly detection flags leaks and outliers; models forecast sales, labor, and COGS by store and day.</p>
+      </div>
+      <div class="step">
+        <span class="num">04</span>
+        <h4>Report & Alert</h4>
+        <p class="muted">Daily Slack/Email alerts with evidence; weekly digest with trends, benchmarks, and store leaderboards.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visuals -->
+  <section class="section">
+    <div class="media-row">
+      <img src="ai-ops-insight.png" alt="AI ops insight (replace with your image)">
+      <img src="ai-exception-report.png" alt="Exception report preview (replace with your image)">
+    </div>
+  </section>
+
+  <!-- What you receive -->
+  <section class="section">
+    <h2>What You Receive</h2>
+    <div class="ticks" style="margin-top:10px">
+      <div class="tick"><i class='bx bx-check-circle'></i><div><strong>Daily Sales Pack</strong> — sales, voids/discounts, tax, comps, variance notes.</div></div>
+      <div class="tick"><i class='bx bx-check-circle'></i><div><strong>Exception Log</strong> — deposit gaps, unusual cash, suspicious refund patterns.</div></div>
+      <div class="tick"><i class='bx bx-check-circle'></i><div><strong>Weekly Flash P&amp;L</strong> — labor/COGS benchmarks, trend commentary.</div></div>
+      <div class="tick"><i class='bx bx-check-circle'></i><div><strong>Delivery Recovery</strong> — disputed orders, recovered amounts, platform scorecards.</div></div>
+      <div class="tick"><i class='bx bx-check-circle'></i><div><strong>Forecasts</strong> — next-7-day sales & labor forecasts with confidence bands.</div></div>
+      <div class="tick"><i class='bx bx-check-circle'></i><div><strong>Year-End Package</strong> — tax-ready books and KPI rollups for your CPA.</div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta">
+    <span class="glow"></span>
+    <div class="cta-inner">
+      <div>
+        <h3 style="margin:.2rem 0">Ready for <span style="color:#58ffbf">clearer decisions</span> and <span style="color:#58ffbf">faster action</span>—every day?</h3>
+        <p class="muted" style="color:#d3dae2">See how VBO AI pinpoints issues in minutes, not months.</p>
+      </div>
+      <div>
+        <a href="requestademo.html" class="btn btn-emerald">Request a Demo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="vbo-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="vbo-brand" href="index.html" aria-label="VBO Service">
+            <img class="brand-mark" src="vbo-logo-square-500.png" width="28" height="28" alt="VBO logo">
+            <span class="word-1" style="color:#fff">VBO</span><span class="word-2">SERVICE</span>
+          </a>
+          <p style="color:#cfd4db; margin:.5rem 0 0">Smarter back-office for thriving restaurants.</p>
+          <div style="margin-top:10px; display:flex; gap:10px">
+            <a class="vbo-social" href="http://facebook.com/" target="_blank" aria-label="Facebook"><i class='bx bxl-facebook-square'></i></a>
+            <a class="vbo-social" href="https://www.linkedin.com/" target="_blank" aria-label="LinkedIn"><i class='bx bxl-linkedin-square'></i></a>
+            <a class="vbo-social" href="https://www.whatsapp.com/" target="_blank" aria-label="WhatsApp"><i class='bx bxl-whatsapp-square'></i></a>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="color:#fff; margin:0 0 .5rem">Company</h4>
+          <ul style="margin:0; padding:0; list-style:none; line-height:1.9">
+            <li><a class="vbo-link" href="index.html">Home</a></li>
+            <li><a class="vbo-link" href="services.html">Service</a></li>
+            <li><a class="vbo-link" href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="color:#fff; margin:0 0 .5rem">Solutions</h4>
+          <ul style="margin:0; padding:0; list-style:none; line-height:1.9">
+            <li><a class="vbo-link" href="vaandbkservice.html">Virtual Accounting</a></li>
+            <li><a class="vbo-link" href="payrollservice.html">Payroll</a></li>
+            <li><a class="vbo-link" href="disputes-doordash.html">Disputes (DoorDash)</a></li>
+            <li><a class="vbo-link" href="disputes-ubereats.html">Disputes (UberEats)</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="color:#fff; margin:0 0 .5rem">For Clients</h4>
+          <ul style="margin:0; padding:0; list-style:none; line-height:1.9; color:#cfd4db">
+            <li><i class='bx bx-phone'></i> &nbsp;<a class="vbo-link" href="tel:+14804908438">+1 (480) 490-8438</a></li>
+            <li><i class='bx bx-mail-send'></i> &nbsp;<a class="vbo-link" href="mailto:admin@vboservice.com">admin@vboservice.com</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 <strong>VBO SERVICE</strong>. All Rights Reserved.</div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>VBO SERVICE — Hiring via Harri</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Icons & Fonts -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --green1:#00c26e; --green2:#009a57;
+      --dark:#0f1113; --dark2:#1f2328;
+      --ink:#0f0f11; --muted:#6b6f76;
+      --radius:18px; --shadow:0 18px 50px rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--ink); background:#f7f8fa}
+    a{text-decoration:none} a:hover{text-decoration:none}
+
+    /* ===== Top Announcement ===== */
+    .vbo-topbar{background:#0c0d0f;color:#fff;text-align:center;padding:.6rem .75rem;font-size:14px;border-bottom:1px solid rgba(255,255,255,.08)}
+    .vbo-topbar a{color:#7bffc1;font-weight:800}
+
+    /* ===== Navbar ===== */
+    .vbo-navbar{position:sticky; top:0; z-index:50; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    .vbo-nav-inner{max-width:1200px;margin:auto;padding:.7rem 16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .vbo-brand{display:flex;align-items:center;gap:.5rem}
+    .brand-mark{width:28px;height:28px;border-radius:8px;box-shadow:0 6px 14px rgba(0,194,110,.25)}
+    .vbo-brand .word-1{font-weight:800;font-size:1.25rem;color:#111}
+    .vbo-brand .word-2{font-weight:800;font-size:1.25rem;color:var(--green1)}
+
+    #nav-toggle{display:none}
+    .nav-toggle-btn{display:none;cursor:pointer;padding:.4rem .6rem;border-radius:10px;border:1px solid #e7eaee}
+    .nav-toggle-btn i{font-size:22px}
+
+    .vbo-navlinks{list-style:none;display:flex;gap:.5rem;margin:0;padding:0;align-items:center}
+    .vbo-link{display:inline-block;padding:.5rem 1.1rem;border-radius:999px;color:#111;border:1px solid transparent;transition:.2s;font-weight:600}
+    .vbo-link:hover{color:#fff;background:linear-gradient(180deg,var(--green1),var(--green2));box-shadow:0 6px 16px rgba(0,194,110,.25)}
+    .vbo-link.active{color:#fff;background:linear-gradient(180deg,var(--green1),var(--green2));box-shadow:0 6px 16px rgba(0,194,110,.28)}
+
+    .nav-demo-btn{
+      display:inline-flex;align-items:center;gap:.45rem;padding:.55rem 1.1rem;border-radius:999px;
+      color:#fff;background:linear-gradient(180deg,var(--green1),var(--green2));
+      box-shadow:0 10px 26px rgba(0,194,110,.28);font-weight:800;transition:transform .08s,filter .2s,box-shadow .2s
+    }
+    .nav-demo-btn:hover{transform:translateY(-1px);filter:brightness(1.05);box-shadow:0 14px 34px rgba(0,194,110,.35)}
+
+    @media (max-width: 980px){
+      .nav-toggle-btn{display:block}
+      .vbo-navlinks{display:none;position:absolute;left:0;right:0;top:60px;background:#fff;padding:10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+      #nav-toggle:checked ~ .vbo-navlinks{display:flex;flex-direction:column;align-items:stretch;gap:.35rem}
+      .vbo-link,.nav-demo-btn{width:100%;text-align:center}
+    }
+
+    /* ===== Hero ===== */
+    .hero{
+      background:
+        radial-gradient(110% 70% at 10% 0%, rgba(0,194,110,.14), transparent 50%),
+        radial-gradient(90% 80% at 90% 20%, rgba(0,154,87,.12), transparent 60%),
+        linear-gradient(180deg,#111,#171a1f);
+      color:#fff; padding:66px 16px
+    }
+    .hero-inner{max-width:1100px;margin:auto;display:grid;grid-template-columns:1.08fr .92fr;gap:28px;align-items:center}
+    .hero h1{font-size:clamp(34px,5.2vw,52px);line-height:1.06;margin:0 0 10px}
+    .hero p{max-width:720px;margin:8px 0 18px;color:#d7dbe1}
+    .btnX{display:inline-flex;align-items:center;gap:.6rem;padding:12px 18px;border-radius:999px;font-weight:800;border:0;cursor:pointer}
+    .btn-primaryX{color:#fff;background:linear-gradient(180deg,var(--green1),var(--green2));box-shadow:0 12px 30px rgba(0,194,110,.25)}
+    .btn-primaryX:hover{transform:translateY(-1px);filter:brightness(1.05)}
+    .btn-darkX{color:#fff;background:linear-gradient(180deg,#2b2f36,#171a1f);border:1px solid rgba(255,255,255,.18)}
+    .hero__img{width:100%;border-radius:18px;box-shadow:var(--shadow);display:block;object-fit:cover;aspect-ratio:4/3}
+
+    @media (max-width: 900px){
+      .hero-inner{grid-template-columns:1fr}
+      .hero__img{aspect-ratio:16/9}
+    }
+
+    /* ===== Steps ===== */
+    .section{max-width:1200px;margin:40px auto;padding:0 16px}
+    .h2{font-size:clamp(26px,3.6vw,34px);margin:0 0 14px}
+    .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+    .step-card{background:#fff;border-radius:18px;box-shadow:var(--shadow);padding:18px}
+    .step-badge{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;font-weight:800;color:#fff;background:linear-gradient(180deg,var(--green1),var(--green2));margin-bottom:8px}
+    .step-title{font-weight:800;margin:.2rem 0}
+    .step-card p{color:#2b2e33;margin:.3rem 0 0}
+
+    /* ===== What We Handle ===== */
+    .feature-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+    .cardFx{background:#fff;border-radius:18px;box-shadow:var(--shadow);padding:18px;display:flex;gap:12px}
+    .iconFx{width:44px;height:44px;border-radius:12px;background:linear-gradient(180deg,#eef5f0,#e6fff4);display:grid;place-items:center;font-size:22px;color:var(--green2)}
+
+    /* ===== Deliverables ===== */
+    .deliv{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .deliv li{margin:.3rem 0}
+    @media (max-width: 760px){ .deliv{grid-template-columns:1fr} }
+
+    /* ===== CTA band ===== */
+    .cta-band{max-width:1200px;margin:40px auto;border-radius:18px;padding:22px 18px;background:
+      radial-gradient(80% 80% at 10% 10%, rgba(0,194,110,.14), transparent 60%),
+      linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.18)),
+      #1f2328;color:#fff;position:relative;overflow:hidden}
+    .cta-band__glow{position:absolute;inset:auto -10% -40% auto;width:60%;height:160%;background:radial-gradient(50% 50% at 30% 50%, rgba(0,255,136,.14), transparent 60%);filter:blur(24px)}
+
+    /* ===== FAQ ===== */
+    details{background:#fff;border-radius:16px;box-shadow:var(--shadow);padding:14px 16px}
+    summary{cursor:pointer;font-weight:700}
+
+    /* ===== Footer ===== */
+    .vbo-footer{background:linear-gradient(180deg,#1f2328,#0f1113);color:#fff;margin-top:60px;position:relative;overflow:hidden}
+    .vbo-footer::before{content:"";position:absolute;top:-30%;left:-20%;width:80%;height:120%;background:radial-gradient(50% 50% at 30% 50%, rgba(0,255,136,.12), transparent 70%);filter:blur(50px)}
+    .vbo-footer .container{max-width:1200px;margin:auto;padding:32px 16px}
+    .footer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px}
+    @media (max-width: 980px){ .footer-grid{grid-template-columns:1fr 1fr} }
+    @media (max-width: 640px){ .footer-grid{grid-template-columns:1fr} }
+    .vbo-footer a{color:rgba(255,255,255,.85)}
+    .vbo-footer a:hover{color:var(--green1)}
+    .footer-bottom{background:#0c0e0f;border-top:1px solid rgba(255,255,255,.08);text-align:center;padding:12px 16px;color:#cfd4db}
+    .vbo-linkF{color:rgba(255,255,255,.8)}
+    .vbo-linkF:hover{color:#00c26e}
+    .vbo-social i{font-size:28px;color:rgba(255,255,255,.8)} .vbo-social:hover i{color:#00c26e}
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="vbo-topbar">
+    🧑‍🍳 Hiring via <strong>Harri</strong> now available for Subway, QSR & Fuel — policy-aligned, pay-rate smart, fully managed.
+    <a href="requestademo.html">Get a demo →</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="vbo-navbar">
+    <div class="vbo-nav-inner">
+      <a class="vbo-brand" href="index.html" aria-label="VBO Service">
+        <img src="vbo-logo-square-500.png" class="brand-mark" alt="VBO" width="28" height="28">
+        <span class="word-1">VBO</span><span class="word-2">SERVICE</span>
+      </a>
+
+      <input type="checkbox" id="nav-toggle">
+      <label class="nav-toggle-btn" for="nav-toggle" aria-label="Menu"><i class='bx bx-menu'></i></label>
+
+      <ul class="vbo-navlinks">
+        <li><a href="index.html" class="vbo-link">Home</a></li>
+        <li><a href="services.html" class="vbo-link active">Service</a></li>
+        <li><a href="contact.html" class="vbo-link">Contact</a></li>
+        <li><a href="requestademo.html" class="nav-demo-btn"><i class='bx bx-play-circle'></i> Request a Demo</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div>
+        <h1>Hiring via Harri — Policy-Aligned, Pay-Rate Smart</h1>
+        <p>
+          We set up your Harri workspace, define roles and pay ranges by market, publish jobs, screen candidates,
+          coordinate interviews, and onboard new hires — all aligned to your company rules. You get a steady shortlist of
+          qualified people, faster time-to-hire, and audit-ready documentation.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a href="requestademo.html" class="btnX btn-primaryX"><i class='bx bx-rocket'></i> Get a Demo</a>
+          <a href="contact.html" class="btnX btn-darkX"><i class='bx bx-chat'></i> Talk to an Expert</a>
+        </div>
+      </div>
+      <img src="./assets/img/harrimg.png" alt="Harri hiring workflow" class="hero__img">
+    </div>
+  </header>
+
+  <!-- How it works -->
+  <section class="section">
+    <h2 class="h2">How It Works</h2>
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-badge">01</div>
+        <div class="step-title">Secure Access & Workspace Setup</div>
+        <p>We collect Harri admin access, brand/locations, and your hiring rules (eligibility, background check policy, document list, notice periods, etc.). Templates and user roles are created for managers.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">02</div>
+        <div class="step-title">Role & Pay-Rate Framework</div>
+        <p>We define job families (crew, shift lead, manager), market-aware pay bands, tip policies, bonuses, and differentials. All postings follow your approved ranges to protect margins and compliance.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">03</div>
+        <div class="step-title">Post, Promote & Source</div>
+        <p>Branded job pages, one-click distribution to boards, knockout questions, and screening forms. We keep ads refreshed so pipelines don’t go stale across every location.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">04</div>
+        <div class="step-title">Screen & Shortlist</div>
+        <p>We triage applications against your criteria, verify experience/availability, run quick intro calls, and deliver manager-ready shortlists with scorecards inside Harri.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">05</div>
+        <div class="step-title">Schedule Interviews & Feedback</div>
+        <p>Calendar coordination, reminders, and interview scorecards to keep hiring consistent and fair. No-show recovery and re-slotting included.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">06</div>
+        <div class="step-title">Offer, Docs & Onboarding</div>
+        <p>Offer letters with approved pay, e-sign documents (W-4/I-9 equivalents & company docs), identity/work authorization checks per policy, and new-hire profiles created in Harri.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">07</div>
+        <div class="step-title">Handoff to Payroll & Operations</div>
+        <p>New-hire export for payroll, benefits, and scheduling. We ensure position, rate, store, and start date match your records so labor costs stay accurate from day one.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- What we handle -->
+  <section class="section">
+    <h2 class="h2">What We Handle for You</h2>
+    <div class="feature-cards">
+      <div class="cardFx">
+        <div class="iconFx"><i class='bx bxs-user-plus'></i></div>
+        <div><strong>Multi-location hiring cockpit</strong><br/>Unified pipeline, store filters, and role templates for consistent execution.</div>
+      </div>
+      <div class="cardFx">
+        <div class="iconFx"><i class='bx bxs-badge-dollar'></i></div>
+        <div><strong>Pay-rate governance</strong><br/>Role-wise pay bands & approvals so postings stay inside margin targets.</div>
+      </div>
+      <div class="cardFx">
+        <div class="iconFx"><i class='bx bxs-file-doc'></i></div>
+        <div><strong>Compliance & docs</strong><br/>Offer letters, e-sign packages, I-9/W-4 equivalents, policy acknowledgments, and audit trail.</div>
+      </div>
+      <div class="cardFx">
+        <div class="iconFx"><i class='bx bxs-bot'></i></div>
+        <div><strong>Screening & scorecards</strong><br/>Knockout Qs, availability checks, standardized scorecards for comparable hiring decisions.</div>
+      </div>
+      <div class="cardFx">
+        <div class="iconFx"><i class='bx bxs-calendar'></i></div>
+        <div><strong>Interview logistics</strong><br/>Scheduling, reminders, no-show recovery, manager nudges — we keep the process moving.</div>
+      </div>
+      <div class="cardFx">
+        <div class="iconFx"><i class='bx bxs-cloud-upload'></i></div>
+        <div><strong>Payroll handoff</strong><br/>Clean new-hire exports with rate, role, store and start date aligned to payroll.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deliverables -->
+  <section class="section">
+    <h2 class="h2">What You Receive</h2>
+    <ul class="deliv">
+      <li>📈 Weekly hiring dashboard — openings, applicants, interviews, offers, time-to-hire, and store-wise funnel.</li>
+      <li>✅ Manager-ready shortlists with scorecards and notes inside Harri.</li>
+      <li>📝 Offer & document packet — e-sign, audit trail, and compliance checklist.</li>
+      <li>🔁 New-hire export to payroll/scheduling; issue list closed before start date.</li>
+      <li>💬 Slack/Email notifications — daily pipeline updates and exceptions.</li>
+      <li>🔒 Policy alignment — background check workflow (if applicable), eligibility, and rate approvals.</li>
+    </ul>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-band">
+    <span class="cta-band__glow"></span>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between">
+      <div>
+        <div style="opacity:.8;letter-spacing:.16em;text-transform:uppercase;font-size:12px">Hiring, Simplified</div>
+        <h3 style="margin:.3rem 0 0">Ready to fill roles faster — with the right pay & clean onboarding?</h3>
+      </div>
+      <div style="display:flex;gap:10px">
+        <a href="requestademo.html" class="btnX btn-primaryX"><i class='bx bx-rocket'></i> Request a Demo</a>
+        <a href="contact.html" class="btnX btn-darkX"><i class='bx bx-chat'></i> Talk to an Expert</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" style="display:grid;gap:12px">
+    <h2 class="h2">FAQs</h2>
+
+    <details>
+      <summary>Who owns the Harri account and data?</summary>
+      <p style="margin:.6rem 0 0">You do. We operate as your admin/users under your policies. All candidates, documents, and history remain in your Harri tenant.</p>
+    </details>
+
+    <details>
+      <summary>How do you decide pay rates?</summary>
+      <p style="margin:.6rem 0 0">We implement your approved bands by role & market, with guardrails for differentials (overnights, high-volume stores). Any out-of-band offer requires your approval.</p>
+    </details>
+
+    <details>
+      <summary>Can you integrate with our payroll?</summary>
+      <p style="margin:.6rem 0 0">Yes — we format a clean new-hire export (rate, role, store, start date) for your payroll provider. This avoids under/over-payment issues from day one.</p>
+    </details>
+
+    <details>
+      <summary>Do managers still interview?</summary>
+      <p style="margin:.6rem 0 0">Yes. We shortlist + schedule. Your managers make the final call with structured scorecards so quality stays high and consistent.</p>
+    </details>
+  </section>
+
+  <!-- Footer -->
+  <footer class="vbo-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="vbo-brand" href="index.html">
+            <img src="vbo-logo-square-500.png" class="brand-mark" alt="VBO" width="28" height="28">
+            <span class="word-1" style="color:#fff">VBO</span><span class="word-2">SERVICE</span>
+          </a>
+          <p style="color:#cfd4db;margin:.5rem 0 0">Smarter back-office for thriving restaurants.</p>
+          <a class="vbo-social" href="#"><i class='bx bxl-facebook-square'></i></a>
+          <a class="vbo-social" href="#"><i class='bx bxl-linkedin-square'></i></a>
+          <a class="vbo-social" href="#"><i class='bx bxl-whatsapp-square'></i></a>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 .5rem">Company</h4>
+          <ul style="list-style:none;margin:0;padding:0;line-height:1.9">
+            <li><a class="vbo-linkF" href="index.html">Home</a></li>
+            <li><a class="vbo-linkF" href="services.html">Service</a></li>
+            <li><a class="vbo-linkF" href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 .5rem">Solutions</h4>
+          <ul style="list-style:none;margin:0;padding:0;line-height:1.9">
+            <li><a class="vbo-linkF" href="#">Hiring via Harri</a></li>
+            <li><a class="vbo-linkF" href="#">Payroll</a></li>
+            <li><a class="vbo-linkF" href="#">Accounting</a></li>
+            <li><a class="vbo-linkF" href="#">Loss Prevention</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 .5rem">For Clients</h4>
+          <ul style="list-style:none;margin:0;padding:0;line-height:1.9">
+            <li><a class="vbo-linkF" href="tel:+14804908438"><i class='bx bx-phone'></i> +1 (480) 490-8438</a></li>
+            <li><a class="vbo-linkF" href="mailto:admin@vboservice.com"><i class='bx bx-mail-send'></i> admin@vboservice.com</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 <strong>VBO SERVICE</strong>. All Rights Reserved.</div>
+  </footer>
+
+</body>
+</html>

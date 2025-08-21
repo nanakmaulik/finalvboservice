@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>VBO SERVICE — DoorDash Disputes Desk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Icons & Fonts -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --green1:#00c26e; --green2:#009a57;
+      --ink:#0f0f11; --muted:#6b6f76;
+      --bg:#0f1113; --bg2:#15191f;
+      --radius:18px; --shadow:0 18px 50px rgba(0,0,0,.20);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; color:var(--ink); background:#f7f8fa}
+
+    /* ===== Topbar + Navbar (same feel as your site) ===== */
+    .topbar{background:#0c0d0f; color:#fff; text-align:center; font-size:14px; padding:.55rem .8rem; border-bottom:1px solid rgba(255,255,255,.08)}
+    .topbar a{color:var(--green1); text-decoration:none; font-weight:800}
+
+    .nav{position:sticky; top:0; z-index:50; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    .nav__inner{max-width:1200px; margin:auto; padding:.7rem 16px; display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .brand{display:flex; align-items:center; gap:.5rem; text-decoration:none}
+    .brand-mark{width:28px; height:28px; border-radius:8px; box-shadow:0 6px 14px rgba(0,194,110,.25)}
+    .brand .w1{font-weight:800; font-size:1.25rem; color:#111}
+    .brand .w2{font-weight:800; font-size:1.25rem; color:var(--green1)}
+
+    #navToggle{display:none}
+    .nav__btn{display:none; cursor:pointer; padding:.4rem .6rem; border-radius:10px; border:1px solid #e7eaee}
+    .nav__btn i{font-size:22px}
+    .nav__links{list-style:none; display:flex; gap:.5rem; margin:0; padding:0; align-items:center}
+    .nav__link{display:inline-block; padding:.5rem 1.1rem; border-radius:999px; color:#111; text-decoration:none; border:1px solid transparent; transition:.2s}
+    .nav__link:hover{color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2)); box-shadow:0 6px 16px rgba(0,194,110,.25)}
+    .nav__link.is-active{color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2)); box-shadow:0 6px 16px rgba(0,194,110,.25)}
+    .nav__cta{display:inline-flex; align-items:center; gap:.45rem; padding:.55rem 1.1rem; border-radius:999px; color:#fff; text-decoration:none;
+      background:linear-gradient(180deg,var(--green1),var(--green2)); font-weight:800; box-shadow:0 10px 26px rgba(0,194,110,.28)}
+    .nav__cta:hover{transform:translateY(-1px); filter:brightness(1.05)}
+
+    @media (max-width:980px){
+      .nav__btn{display:block}
+      .nav__links{display:none; position:absolute; left:0; right:0; top:60px; background:#fff; padding:10px 16px; box-shadow:0 12px 30px rgba(0,0,0,.08)}
+      #navToggle:checked ~ .nav__links{display:flex; flex-direction:column; align-items:stretch; gap:.35rem}
+      .nav__link,.nav__cta{width:100%; text-align:center}
+    }
+
+    /* ===== Hero ===== */
+    .hero{
+      background: radial-gradient(120% 80% at 0% 0%, rgba(0,194,110,.12), transparent 60%),
+                  linear-gradient(180deg,#111,#1a1f26);
+      color:#fff;
+    }
+    .hero__in{max-width:1200px; margin:auto; padding:56px 16px; display:grid; grid-template-columns:1.05fr .95fr; gap:36px; align-items:center}
+    .hero h1{font-size:clamp(34px,5.8vw,58px); line-height:.98; margin:0 0 12px}
+    .hero p{color:#d7dbe1; margin:0 0 18px; max-width:58ch}
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:.6rem; padding:12px 18px; border-radius:999px; border:0; cursor:pointer; font-weight:800}
+    .btn--green{color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2)); box-shadow:0 12px 30px rgba(0,194,110,.25)}
+    .btn--ghost{background:transparent; color:#fff; border:1px solid rgba(255,255,255,.25)}
+    .btn--green:hover,.btn--ghost:hover{transform:translateY(-1px); filter:brightness(1.05)}
+    .hero__img{width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:18px; box-shadow:var(--shadow)}
+
+    @media (max-width:980px){ .hero__in{grid-template-columns:1fr} .hero__media{order:-1} .hero__img{aspect-ratio:16/9} }
+
+    /* ===== Steps ===== */
+    .section{max-width:1200px; margin:34px auto; padding:0 16px}
+    .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:18px}
+    @media (max-width:1080px){ .steps{grid-template-columns:1fr 1fr} }
+    @media (max-width:620px){ .steps{grid-template-columns:1fr} }
+    .step{background:#fff; border-radius:16px; padding:16px; box-shadow:0 10px 26px rgba(0,0,0,.06)}
+    .badge{display:inline-grid; place-items:center; width:34px; height:34px; border-radius:9px; color:#fff; font-weight:800;
+      background:linear-gradient(180deg,var(--green1),var(--green2)); box-shadow:0 6px 14px rgba(0,194,110,.25)}
+    .step h3{margin:10px 0 8px}
+    .step p{margin:0; color:#2b2e33}
+
+    /* images row */
+    .media-row{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px}
+    @media (max-width:820px){ .media-row{grid-template-columns:1fr} }
+    .media-row img{width:100%; height:auto; aspect-ratio:16/9; object-fit:cover; border-radius:16px; box-shadow:var(--shadow)}
+
+    /* What we handle / receive */
+    .list{display:grid; grid-template-columns:1fr 1fr; gap:12px 28px; margin-top:10px}
+    @media (max-width:880px){ .list{grid-template-columns:1fr} }
+    .li{display:flex; gap:10px; align-items:flex-start}
+    .li i{color:var(--green1); font-size:22px; margin-top:2px}
+
+    /* CTA band */
+    .cta{background: radial-gradient(70% 70% at 10% 20%, rgba(0,194,110,.14), transparent 60%), #1f2328; color:#fff; border-radius:18px; padding:28px 16px; margin:40px auto}
+    .cta__in{max-width:1200px; margin:auto; display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center}
+    @media (max-width:820px){ .cta__in{grid-template-columns:1fr} }
+
+    /* Footer (same look) */
+    .footer{background:linear-gradient(180deg,#1f2328,#0f1113); color:#fff; margin-top:40px; position:relative; overflow:hidden}
+    .footer::before{content:""; position:absolute; top:-30%; left:-20%; width:80%; height:120%;
+      background:radial-gradient(50% 50% at 30% 50%, rgba(0,255,136,.12), transparent 70%); filter:blur(50px)}
+    .footer__in{max-width:1200px; margin:auto; padding:28px 16px}
+    .foot-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:26px}
+    @media (max-width:980px){ .foot-grid{grid-template-columns:1fr 1fr} }
+    @media (max-width:640px){ .foot-grid{grid-template-columns:1fr} }
+    .foot a{color:rgba(255,255,255,.85); text-decoration:none}
+    .foot a:hover{color:var(--green1)}
+    .foot-bottom{background:#0c0e0f; border-top:1px solid rgba(255,255,255,.08); color:#cfd4db; text-align:center; padding:12px 16px}
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    🚀 Disputes Desk now live for <strong>DoorDash</strong>. Recover more, lose less. <a href="requestademo.html">Get a demo →</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="nav" aria-label="Main">
+    <div class="nav__inner">
+      <a class="brand" href="index.html">
+        <img src="vbo-logo-square-500.png" alt="VBO Service" class="brand-mark" width="28" height="28">
+        <span class="w1">VBO</span><span class="w2">SERVICE</span>
+      </a>
+
+      <input type="checkbox" id="navToggle">
+      <label class="nav__btn" for="navToggle" aria-label="Menu"><i class='bx bx-menu'></i></label>
+
+      <ul class="nav__links">
+        <li><a class="nav__link" href="index.html">Home</a></li>
+        <li><a class="nav__link is-active" href="services.html">Service</a></li>
+        <li><a class="nav__link" href="contact.html">Contact</a></li>
+        <li><a class="nav__cta" href="requestademo.html"><i class='bx bx-play-circle'></i> Request a Demo</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero__in">
+      <div class="hero__copy">
+        <h1>DoorDash Disputes Desk for Restaurants</h1>
+        <p>
+          We log in to your DoorDash admin, pull every charge, and file airtight disputes order by order so revenue comes back and
+          your next payroll reflects the real profit. Daily, relentless, fully managed.
+        </p>
+        <div>
+          <a href="requestademo.html" class="btn btn--green">Get a Demo</a>
+          <a href="contact.html" class="btn btn--ghost" style="margin-left:8px">Talk to an Expert</a>
+        </div>
+      </div>
+      <div class="hero__media">
+        <img class="hero__img" src="doordashdispute1.png" alt="Disputes processing workspace">
+      </div>
+    </div>
+  </header>
+
+  <!-- How it works -->
+  <section class="section">
+    <h2 style="margin:0 0 10px">How It Works</h2>
+    <p style="color:#2b2e33; margin:0 0 16px">The exact workflow you described translated into a tight, daily process.</p>
+
+    <div class="steps">
+      <div class="step">
+        <span class="badge">01</span>
+        <h3>Secure Access Setup</h3>
+        <p>We collect DoorDash admin credentials (and 2FA if enabled), set a private Slack channel, and restrict access to your assigned dispute managers.</p>
+      </div>
+      <div class="step">
+        <span class="badge">02</span>
+        <h3>Daily Order Intake</h3>
+        <p>Each day we pull all returns/adjustments/chargebacks from DoorDash. Every loss-tagged order is queued automatically for review.</p>
+      </div>
+      <div class="step">
+        <span class="badge">03</span>
+        <h3>Evidence & Filing</h3>
+        <p>For each case we compile POS/receipt data, order timeline, itemization, and any supporting proof, then file a precise dispute with the correct reason code.</p>
+      </div>
+      <div class="step">
+        <span class="badge">04</span>
+        <h3>Chase, Appeal, Escalate</h3>
+        <p>We track case IDs, follow up pending, and appeal denials with additional evidence so legitimate claims don’t slip through.</p>
+      </div>
+      <div class="step">
+        <span class="badge">05</span>
+        <h3>Recovered $ → Your Bottom Line</h3>
+        <p>Wins are logged in your recovery ledger and posted in Slack. We summarize daily savings and roll them into your next payroll view.</p>
+      </div>
+    </div>
+
+    <div class="media-row">
+      <img src="doordashdispute1.png" alt="Queue of disputed orders">
+      <img src="doordash2.png" alt="Recovery ledger and summaries">
+    </div>
+  </section>
+
+  <!-- What we handle -->
+  <section class="section">
+    <h2 style="margin:0 0 10px">What We Dispute (DoorDash)</h2>
+    <p style="color:#2b2e33; margin:0 0 14px">High-frequency loss reasons we attack daily—so you keep the revenue you actually earned.</p>
+
+    <div class="list">
+      <div class="li"><i class='bx bx-check-shield'></i><div><strong>Missing/Incorrect Items</strong> — item wasn’t missing; proof with make-sheet, POS, and timestamps.</div></div>
+      <div class="li"><i class='bx bx-check-shield'></i><div><strong>Customer Fraud</strong> — repeat claimers and suspicious patterns; we escalate with consolidated evidence.</div></div>
+      <div class="li"><i class='bx bx-check-shield'></i><div><strong>Late/Cancelled After Prep</strong> — food was ready on time; driver delay/cancel is not merchant fault.</div></div>
+      <div class="li"><i class='bx bx-check-shield'></i><div><strong>Temperature/Quality Claims</strong> — documented handoff, bag seals, and prep times used to contest.</div></div>
+      <div class="li"><i class='bx bx-check-shield'></i><div><strong>System Chargebacks</strong> — mismatched totals, double charges, unverified credits; corrected via case with attachments.</div></div>
+      <div class="li"><i class='bx bx-check-shield'></i><div><strong>Dasher-Related Issues</strong> — no-show/incorrect pickup; we align order events to remove liability.</div></div>
+    </div>
+  </section>
+
+  <!-- What you receive -->
+  <section class="section" style="background:#fff; border-radius:18px; padding:18px; box-shadow:0 10px 26px rgba(0,0,0,.06)">
+    <h2 style="margin:0 0 10px">What You Receive</h2>
+    <div class="list">
+      <div class="li"><i class='bx bx-list-check'></i><div><strong>Daily Dispute Queue</strong> — every loss-tagged order filed the same day.</div></div>
+      <div class="li"><i class='bx bx-bar-chart'></i><div><strong>Recovery Dashboard</strong> — wins, pending, denials, and dollars recovered.</div></div>
+      <div class="li"><i class='bx bxs-bell-ring'></i><div><strong>Slack Updates</strong> — per-case notifications in your private channel.</div></div>
+      <div class="li"><i class='bx bx-file'></i><div><strong>Weekly Summary</strong> — reasons, patterns, and prevention notes for ops.</div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="cta__in">
+      <div>
+        <h3 style="margin:.2rem 0 .4rem">Want us to start filing from tomorrow’s orders?</h3>
+        <p style="margin:0; color:#dfe4ea">We’ll connect, pull your backlog, and begin daily recoveries—so the next payroll shows real profit.</p>
+      </div>
+      <div>
+        <a href="requestademo.html" class="btn btn--green">Start My Disputes Desk</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__in">
+      <div class="foot-grid">
+        <div class="foot">
+          <a class="brand" href="index.html">
+            <img src="vbo-logo-square-500.png" alt="VBO" class="brand-mark" width="28" height="28">
+            <span class="w1" style="color:#fff">VBO</span><span class="w2"> SERVICE</span>
+          </a>
+          <p style="color:#cfd4db; margin:.5rem 0 0">Smarter back-office for thriving restaurants.</p>
+        </div>
+        <div class="foot"><h4>Company</h4>
+          <ul style="list-style:none; margin:8px 0 0; padding:0; line-height:1.9">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Service</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="foot"><h4>Solutions</h4>
+          <ul style="list-style:none; margin:8px 0 0; padding:0; line-height:1.9">
+            <li><a href="#">Loss Prevention</a></li>
+            <li><a href="#">Payroll</a></li>
+            <li><a href="#">Disputes (3rd-party)</a></li>
+            <li><a href="#">Remote Hiring</a></li>
+          </ul>
+        </div>
+        <div class="foot"><h4>For Clients</h4>
+          <ul style="list-style:none; margin:8px 0 0; padding:0; line-height:1.9">
+            <li><a href="tel:+14804908438"><i class='bx bx-phone'></i> +1 (480) 490-8438</a></li>
+            <li><a href="mailto:admin@vboservice.com"><i class='bx bx-mail-send'></i> admin@vboservice.com</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">© 2025 <strong>VBO SERVICE</strong>. All Rights Reserved.</div>
+  </footer>
+
+</body>
+</html>
