@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>VBO SERVICE — Our Services</title>
+  <link rel="shortcut icon" type="image/x-icon" href="vbo-logo-square-500.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Icons & Fonts -->
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --green1:#00c26e; --green2:#009a57;
+      --dark:#0f1113; --dark2:#1f2328;
+      --ink:#0f0f11; --muted:#6b6f76;
+      --radius:18px; --shadow:0 18px 50px rgba(0,0,0,.18);
+    }
+    *{box-sizing:border-box}
+    body{margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink); background:#f7f8fa}
+
+    /* ===== Top Announcement ===== */
+    .vbo-topbar{
+      background:#0c0d0f; color:#fff; text-align:center;
+      padding:.55rem .75rem; font-size:14px; border-bottom:1px solid rgba(255,255,255,.08)
+    }
+    .vbo-topbar a{color:var(--green1); text-decoration:none; font-weight:700; margin-left:.5rem}
+
+    /* ===== Navbar (CSS-only hamburger) ===== */
+    .vbo-navbar{position:sticky; top:0; z-index:50; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    .vbo-nav-inner{max-width:1200px; margin:auto; padding:.7rem 16px; display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .vbo-brand{display:flex; align-items:center; gap:.5rem; text-decoration:none}
+    .brand-mark{border-radius:8px; box-shadow:0 6px 14px rgba(0,194,110,.25)}
+    .vbo-brand .word-1{font-weight:800; font-size:1.25rem; color:#111}
+    .vbo-brand .word-2{font-weight:800; font-size:1.25rem; color:var(--green1)}
+
+    /* mobile toggle */
+    #nav-toggle{display:none}
+    .nav-toggle-btn{display:none; cursor:pointer; padding:.4rem .6rem; border-radius:10px; border:1px solid #e7eaee}
+    .nav-toggle-btn i{font-size:22px}
+
+    .vbo-navlinks{list-style:none; display:flex; gap:.5rem; margin:0; padding:0; align-items:center}
+    .vbo-link{display:inline-block; padding:.5rem 1rem; border-radius:999px; color:#111; text-decoration:none; border:1px solid transparent; transition:.2s}
+    .vbo-link:hover{color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2)); box-shadow:0 6px 16px rgba(0,194,110,.25)}
+
+    .nav-demo-btn{
+      display:inline-flex; align-items:center; gap:.45rem; padding:.55rem 1.1rem; border-radius:999px;
+      color:#fff; text-decoration:none; background:linear-gradient(180deg,var(--green1),var(--green2));
+      box-shadow:0 10px 26px rgba(0,194,110,.28); font-weight:800; transition:transform .08s, filter .2s, box-shadow .2s;
+    }
+    .nav-demo-btn:hover{transform:translateY(-1px); filter:brightness(1.05); box-shadow:0 14px 34px rgba(0,194,110,.35)}
+
+    @media (max-width: 980px){
+      .nav-toggle-btn{display:block}
+      .vbo-navlinks{display:none; position:absolute; left:0; right:0; top:60px; background:#fff; padding:10px 16px; box-shadow:0 10px 30px rgba(0,0,0,.08)}
+      #nav-toggle:checked ~ .vbo-navlinks{display:flex; flex-direction:column; align-items:stretch; gap:.35rem}
+      .vbo-link, .nav-demo-btn{width:100%; text-align:center}
+    }
+
+    /* ===== Hero ===== */
+    .hero{
+      background:
+        radial-gradient(110% 70% at 10% 0%, rgba(0,194,110,.14), transparent 50%),
+        radial-gradient(90% 80% at 90% 20%, rgba(0,154,87,.12), transparent 60%),
+        linear-gradient(180deg,#111,#171a1f);
+      color:#fff; padding:66px 16px
+    }
+    .hero-inner{max-width:1100px; margin:auto; text-align:center}
+    .hero h1{font-size:clamp(34px,5.2vw,52px); line-height:1.06; margin:0 0 10px}
+    .hero p{max-width:820px; margin:8px auto 18px; color:#d7dbe1}
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:.6rem; padding:12px 18px; border-radius:999px; font-weight:800; border:0; cursor:pointer}
+    .btn-primary{color:#fff; background:linear-gradient(180deg,var(--green1),var(--green2)); box-shadow:0 12px 30px rgba(0,194,110,.25)}
+    .btn-primary:hover{transform:translateY(-1px); filter:brightness(1.05)}
+    .btn-ghost{background:transparent; color:#fff; border:1px solid rgba(255,255,255,.25)}
+    .btn-ghost:hover{background:rgba(255,255,255,.08)}
+
+    /* ===== Section intro text ===== */
+    .section{max-width:1200px; margin:40px auto; padding:0 16px}
+    .lead-wrap{display:grid; grid-template-columns: 120px 1fr; gap:16px; align-items:center}
+    @media (max-width: 720px){ .lead-wrap{grid-template-columns:1fr} }
+    .lead-icon{display:flex; align-items:center; justify-content:center; font-size:36px; color:var(--green1)}
+    .lead h2{margin:.2rem 0 8px}
+    .lead p{color:#2b2e33}
+
+    /* ===== Filter Pills ===== */
+    .services-section{max-width:1200px; margin:32px auto 0; padding:0 16px}
+    .filter-toggle{position:absolute; opacity:0; pointer-events:none}
+    .service-tag{
+      background: radial-gradient(80% 80% at 10% 10%, rgba(0,194,110,.12), transparent 60%),
+                  linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.25)),
+                  var(--dark2);
+      border-radius:18px; padding:28px 12px; position:relative; overflow:hidden; box-shadow:var(--shadow); color:#fff
+    }
+    .service-tag__glow{position:absolute; inset:auto auto -40% -10%; width:80%; height:160%;
+      background: radial-gradient(50% 50% at 40% 50%, rgba(0,255,136,.14), transparent 70%); filter: blur(25px); pointer-events:none}
+    .pillbar{display:flex; justify-content:center; flex-wrap:wrap; gap:12px}
+    .service-pill{
+      border-radius:999px; padding:.6rem 1.6rem; font-weight:600; letter-spacing:.3px; cursor:pointer;
+      color:#fff; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); backdrop-filter:blur(6px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.1); transition: all .25s ease;
+    }
+    .service-pill:hover{background:linear-gradient(180deg,var(--green1),var(--green2)); border-color:transparent; box-shadow:0 8px 22px rgba(0,194,110,.28)}
+
+    /* Active pill via :has */
+    .services-section:has(#f-all:checked)       label[for="f-all"],
+    .services-section:has(#f-loss:checked)      label[for="f-loss"],
+    .services-section:has(#f-disputes:checked)  label[for="f-disputes"],
+    .services-section:has(#f-acc:checked)       label[for="f-acc"]{
+      background:linear-gradient(180deg,var(--green1),var(--green2)); border-color:transparent; box-shadow:0 8px 22px rgba(0,194,110,.32)
+    }
+
+    /* ===== Grid ===== */
+    .services-grid{
+      display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:28px; margin-top:24px
+    }
+    .service-item{display:none}
+    /* Show rules */
+    #f-all:checked ~ .services-grid .service-item{display:block}
+    #f-loss:checked ~ .services-grid .loss{display:block}
+    #f-disputes:checked ~ .services-grid .disputes{display:block}
+    #f-acc:checked ~ .services-grid .accounting{display:block}
+
+    /* Card */
+    .cardX{display:flex; flex-direction:column; border-radius:18px; overflow:hidden; box-shadow:var(--shadow); background:#000}
+    .cardX img{width:100%; aspect-ratio:16/11; object-fit:cover; display:block; filter:saturate(1.02)}
+    .cardX .overlay{
+      margin-top:-56px; padding:18px; color:#fff;
+      background: linear-gradient(to top, rgba(0,0,0,.8), rgba(0,0,0,0) 60%);
+      display:flex; flex-direction:column; gap:8px; min-height:120px
+    }
+    .tag{display:inline-block; padding:.4rem .8rem; border-radius:999px; border:1px solid rgba(255,255,255,.3); font-weight:600; backdrop-filter:blur(3px)}
+    .cardX p{margin:0; color:#e6e9ee}
+
+    /* ===== Feature section (gallery) ===== */
+    .feature{background:#fff; padding:56px 16px}
+    .feature .wrap{max-width:1200px; margin:auto; display:grid; grid-template-columns:1.1fr .9fr; gap:32px; align-items:center}
+    @media (max-width: 980px){ .feature .wrap{grid-template-columns:1fr} }
+    .feature h1{margin:.3rem 0 1rem}
+    .gallery{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .gallery img{width:100%; border-radius:14px; display:block; object-fit:cover}
+
+    /* ===== Footer ===== */
+    .vbo-footer{background:linear-gradient(180deg,#1f2328,#0f1113); color:#fff; margin-top:60px; position:relative; overflow:hidden}
+    .vbo-footer::before{content:""; position:absolute; top:-30%; left:-20%; width:80%; height:120%; background:radial-gradient(50% 50% at 30% 50%, rgba(0,255,136,.12), transparent 70%); filter:blur(50px)}
+    .vbo-footer .container{max-width:1200px; margin:auto; padding:32px 16px}
+    .vbo-footer a{color:rgba(255,255,255,.85); text-decoration:none}
+    .vbo-footer a:hover{color:var(--green1)}
+    .footer-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:26px}
+    @media (max-width: 980px){ .footer-grid{grid-template-columns:1fr 1fr} }
+    @media (max-width: 640px){ .footer-grid{grid-template-columns:1fr} }
+    .footer-bottom{background:#0c0e0f; border-top:1px solid rgba(255,255,255,.08); text-align:center; padding:12px 16px; color:#cfd4db}
+    .social a{margin-right:8px}
+    .social i{font-size:26px}
+/* pill-like CTA buttons on cards */
+.chip-btn{
+  --ring: rgba(255,255,255,.28);
+  position: relative;
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  padding:.55rem 1.1rem;
+  border-radius:999px;
+  font-weight:800;
+  text-decoration:none;
+  color:#fff;
+  border:1px solid var(--ring);
+  background: rgba(255,255,255,.06);
+  backdrop-filter: blur(4px);
+  transition: transform .12s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  overflow:hidden;
+}
+.chip-btn:hover{
+  background: linear-gradient(180deg,var(--green1),var(--green2));
+  border-color: transparent;
+  box-shadow: 0 10px 26px rgba(0,194,110,.35), inset 0 1px 0 rgba(255,255,255,.2);
+  transform: translateY(-1px);
+}
+/* shiny sweep */
+.chip-btn::after{
+  content:"";
+  position:absolute; top:-20%; bottom:-20%; left:-40%;
+  width:45%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,.55), transparent);
+  transform: skewX(-20deg) translateX(-120%);
+  transition: transform .6s ease;
+  pointer-events:none;
+}
+.chip-btn:hover::after{ transform: skewX(-20deg) translateX(220%); }
+
+/* optional focus state for accessibility */
+.chip-btn:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,194,110,.45);
+}
+
+/* active state for current page */
+.vbo-link.active,
+.vbo-link[aria-current="page"]{
+  color:#fff;
+  background:linear-gradient(180deg,var(--green1),var(--green2));
+  box-shadow:0 6px 16px rgba(0,194,110,.25);
+  border-color:transparent;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Announcement -->
+  <div class="vbo-topbar bg-dark text-light py-2 small text-center">
+    
+    Now offering <strong>Loss Prevention, Payroll Services, 3rd Party Disputes and many more</strong> for Subway, Restaurants & Gas Stations → 
+    <a href="requestademo.html">Book a Free Consultation</a>
+  
+</div>
+
+  <!-- Navbar -->
+  <nav class="vbo-navbar">
+    <div class="vbo-nav-inner">
+      <a class="vbo-brand" href="index.html" aria-label="VBO Service">
+        <svg class="brand-mark" width="28" height="28" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="gNav" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00c26e"/><stop offset="1" stop-color="#009a57"/></linearGradient></defs>
+          <rect width="96" height="96" rx="22" fill="url(#gNav)"/><rect x="6" y="6" width="84" height="84" rx="18" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
+          <path d="M24 50 L42 68 L72 32" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="word-1">VBO</span><span class="word-2">SERVICE</span>
+      </a>
+
+      <input type="checkbox" id="nav-toggle">
+      <label class="nav-toggle-btn" for="nav-toggle" aria-label="Menu"><i class='bx bx-menu'></i></label>
+
+      <ul class="vbo-navlinks">
+        <li><a href="index.html" class="vbo-link">Home</a></li>
+        <li><a href="services.html" class="vbo-link active" aria-current="page">Services</a></li>
+        <li><a href="contact.html" class="vbo-link">Contact</a></li>
+        <li><a href="requestademo.html" class="nav-demo-btn"><i class='bx bx-play-circle'></i> Request a Demo</a></li>
+      </ul>
+      
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-inner">
+      <h1>Back-Office Services That Power Restaurant Growth</h1>
+      <p>From real-time monitoring and loss prevention to payroll, accounting, disputes, and hiring — our expert team streamlines your operations so you can lead the front.</p>
+      <div>
+        <a href="requestademo.html" class="btn btn-primary">Request a Demo</a>
+        <a href="contact.html" class="btn btn-ghost" style="margin-left:8px">Talk to an Expert</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Intro -->
+  <section class="section">
+    <div class="lead-wrap">
+      <div class="lead-icon"><i class='bx bx-shield-quarter'></i></div>
+      <div class="lead">
+        <h2>Intelligent Solutions Driving <span style="color:var(--green1)">Security, Efficiency & Growth</span></h2>
+        <p>
+          At <strong>VBO Service</strong>, we don’t just support your franchise — <em>we transform it</em>. From
+          <strong>AI-powered surveillance</strong> and <strong>loss prevention</strong> to <strong>smart payroll</strong>,
+          <strong>dispute resolution</strong>, and <strong>remote hiring</strong>, our solutions are built to streamline operations,
+          reduce risk, and unlock profitability.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services + Filters (CSS only) -->
+  <section class="services-section">
+    <!-- hidden radios -->
+    <input type="radio" name="svc" id="f-all" class="filter-toggle" checked>
+    <input type="radio" name="svc" id="f-loss" class="filter-toggle">
+    <input type="radio" name="svc" id="f-disputes" class="filter-toggle">
+    <input type="radio" name="svc" id="f-acc" class="filter-toggle">
+
+    <div class="service-tag">
+      <span class="service-tag__glow"></span>
+      <div class="pillbar">
+        <label for="f-all" class="service-pill">All</label>
+        <label for="f-loss" class="service-pill">Loss Prevention</label>
+        <label for="f-disputes" class="service-pill">Third Party Disputes</label>
+        <label for="f-acc" class="service-pill">Accounting</label>
+      </div>
+    </div>
+
+    <div class="services-grid">
+        <!-- Loss Prevention Monitoring -->
+        <article class="service-item loss">
+          <div class="cardX">
+            <img src="./assets/img/cctvimg.png" alt="Loss Prevention Monitoring">
+            <div class="overlay">
+              <a href="losspreventionservice.html" class="chip-btn">Loss Prevention Monitoring</a>
+              <p>Track, detect, and prevent internal losses in real time.</p><br>
+            </div>
+          </div>
+        </article>
+      
+        <!-- Virtual Accounting & Bookkeeping -->
+        <article class="service-item accounting">
+          <div class="cardX">
+            <img src="./assets/img/accountingimg.png" alt="Virtual Accounting & Bookkeeping">
+            <div class="overlay">
+              <a href="virtualaccountingandbookkeeping.html" class="chip-btn">Virtual Accounting &amp; Bookkeeping</a>
+              <p>Smart, cloud-based accounting that keeps finances accurate and accessible.</p>
+            </div>
+          </div>
+        </article>
+      
+        <!-- Payroll Management -->
+        <article class="service-item accounting">
+          <div class="cardX">
+            <img src="./assets/img/payrollimg.png" alt="Payroll Management">
+            <div class="overlay">
+              <a href="payroll.html" class="chip-btn">Payroll Management</a>
+              <p>Accurate, timely, and hassle-free payroll for your teams.</p><br><br>
+            </div>
+          </div>
+        </article>
+      
+        <!-- Uber Eats Disputes -->
+        <article class="service-item disputes">
+          <div class="cardX">
+            <img src="./assets/img/ubereatesimg.png" alt="Uber Eats Disputes Management">
+            <div class="overlay">
+              <a href="uberEatsDisputes.html" class="chip-btn">Uber Eats Disputes Management</a>
+              <p>We resolve order disputes and chargebacks quickly &amp; efficiently.</p>
+            </div>
+          </div>
+        </article>
+      
+        <!-- DoorDash Disputes -->
+        <article class="service-item disputes">
+          <div class="cardX">
+            <img src="./assets/img/doordashimg.png" alt="DoorDash Disputes Management">
+            <div class="overlay">
+              <a href="doordashdisputes.html" class="chip-btn">DoorDash Disputes Management</a>
+              <p>From chargebacks to missing items — we handle it all.</p>
+            </div>
+          </div>
+        </article>
+      
+        <!-- AI Data Analysis -->
+        <article class="service-item accounting">
+          <div class="cardX">
+            <img src="./assets/img/aidataimg.png" alt="AI based Data Analysis">
+            <div class="overlay">
+              <a href="aibasedanlysis.html" class="chip-btn">AI-Based Data Analysis</a>
+              <p>Real-time insights for smarter Subway operations.</p><br>
+            </div>
+          </div>
+        </article>
+      
+        <!-- Secure Bank Deposit (loss + acc) -->
+        <article class="service-item loss accounting">
+          <div class="cardX">
+            <img src="./assets/img/bankdepositimg.png" alt="Secure Bank Deposit Management">
+            <div class="overlay">
+              <a href="bankdeposits.html" class="chip-btn">Secure Bank Deposit Management</a>
+              <p>Safe, timely deposits with full accountability.</p>
+            </div>
+          </div>
+        </article>
+      
+        <!-- Remote Hiring via Harri (acc) -->
+        <article class="service-item accounting">
+          <div class="cardX">
+            <img src="./assets/img/harrimg.png" alt="Remote Hiring Support via Harri">
+            <div class="overlay">
+              <a href="harrihiring.html" class="chip-btn">Remote Hiring Support via Harri</a>
+              <p>From job posts to screening — get the right people faster.</p>
+            </div>
+          </div>
+        </article>
+      </div>
+      
+      <!-- Remote Hiring via Harri (acc) -->
+      <article class="service-item accounting">
+        <div class="cardX">
+          <img src="./assets/img/harrimg.png" alt="Remote Hiring Support via Harri">
+          <div class="overlay">
+            <span class="tag">Remote Hiring Support via Harri</span>
+            <p>From job posts to screening — get the right people faster.</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Feature / Gallery -->
+  <section class="feature">
+    <div class="wrap">
+      <div>
+        <h3 class="feature-work-title" style="color:var(--muted); letter-spacing:.12em; text-transform:uppercase; font-size:15px">Featured</h3>
+        <h1 style="font-size: 50px;" >How We Help Businesses Run Smarter</h1>
+        <p style="color:#2b2e33">
+            At VBO SERVICE, we empower businesses by streamlining the tasks that often slow them down — like payroll processing, employee monitoring, dispute resolution, secure deposits, and remote hiring. Our service are not just about outsourcing work — they’re about building smart systems that bring accuracy, speed, and transparency to your operations. Whether you're running a single outlet or managing multiple locations, we plug into your workflow like an invisible engine — quietly powering your growth while reducing losses, saving time, and freeing up your energy to focus on expansion. This is how we help businesses run not just faster — but smarter.
+        </p>
+      </div>
+      <div class="gallery">
+        <img src="./assets/img/subway3L.png" alt="">
+        <img src="./assets/img/sandwich.png" alt="">
+        <img src="./assets/img/store1.png" alt="">
+        <img src="./assets/img/mal2.png" alt="">
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="vbo-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="vbo-brand" href="index.html">
+            <svg class="brand-mark" width="28" height="28" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs><linearGradient id="gFoot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00c26e"/><stop offset="1" stop-color="#009a57"/></linearGradient></defs>
+              <rect width="96" height="96" rx="22" fill="url(#gFoot)"/><rect x="6" y="6" width="84" height="84" rx="18" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5"/>
+              <path d="M24 50 L42 68 L72 32" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="word-1" style="color:#fff">VBO</span><span class="word-2"> SERVICE</span>
+          </a>
+          <p style="color:#cfd4db; margin:.5rem 0 0">
+            Smarter back-office for thriving restaurants.
+          </p>
+          <div class="social" style="margin-top:10px">
+            <a href="#"><i class='bx bxl-facebook-square'></i></a>
+            <a href="#"><i class='bx bxl-linkedin-square'></i></a>
+            <a href="#"><i class='bx bxl-whatsapp-square'></i></a>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 .5rem">Company</h4>
+          <ul style="margin:0; padding:0; list-style:none; line-height:1.9">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Service</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 .5rem">Solutions</h4>
+          <ul style="margin:0; padding:0; list-style:none; line-height:1.9">
+            <li><a href="#">Loss Prevention</a></li>
+            <li><a href="#">Payroll</a></li>
+            <li><a href="#">Disputes (3rd-party)</a></li>
+            <li><a href="#">Remote Hiring</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="margin:0 0 .5rem">For Clients</h4>
+          <ul style="margin:0; padding:0; list-style:none; line-height:1.9">
+            <li><a href="tel:+14804908438"><i class='bx bx-phone'></i> +1 (480) 490-8438</a></li>
+            <li><a href="mailto:admin@vboservice.com"><i class='bx bx-mail-send'></i> admin@vboservice.com</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2025 <strong>VBO SERVICE</strong>. All Rights Reserved.</div>
+  </footer>
+
+</body>
+</html>
